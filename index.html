@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="bower_components/jquery/dist/jquery.js"> </script>
+</head>
+<body>
+    <style>
+        body{
+            padding-top:100px;
+        }
+        .box{
+            margin: auto;
+            width: 500px;
+        }
+        .box select{
+            width: 100%;
+            font-size: 15px;
+            padding:4px;
+        }
+    </style>
+    <div class="box">
+        <select id="seletorCurso" name="">
+            <option value="sistemas-de-informacao"> Sistemas de Informação  </option>
+            <option value="medicina">medicina  </option>
+            <option value="arquitetura">Arquitetura  </option>
+            <option value="direito">Direito </option>
+        </select>
+    </div>
+
+    <ul id="matrizLista">
+        
+    </ul>
+
+    <script>
+        $(document).ready(function(){
+            $('#seletorCurso').change(function(){
+                console.log(this.value);
+                let obj = {
+                    curso: this.value
+                }
+
+                var matrizes = [];
+                function montaLinks(matrizes){
+                    for(var i = 0; i < matrizes.length; i++){
+                        console.log(matrizes[i]);
+                        $('#matrizLista').append('<li> <a href=' + matrizes[i] + '> Link' + i + '</a> </li>');
+                    }                            
+                }
+
+                $.ajax({
+                    method:'post',
+                    url: 'checkfile.php',
+                    success:function(res){
+                        console.log(res);
+                        if(res !== 'sem_arquivos'){
+                            $('#matrizLista').html('');
+                            matrizes = JSON.parse(res);
+                            matrizes = $.map(matrizes, function(value, index){
+                                return [value];
+                            });
+                            console.log(matrizes);
+                            montaLinks(matrizes);
+                        } else{
+                            $('#matrizLista').html('<li>Sem arquivos disponíveis.. </li>');
+                        }
+                    },
+                    data: obj
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
